@@ -1,0 +1,9 @@
+[project]
+name = "hello-py"
+version = "0.1.0"
+description = "First steps to the Python for AI"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "httpx>=0.28.1",
+]
