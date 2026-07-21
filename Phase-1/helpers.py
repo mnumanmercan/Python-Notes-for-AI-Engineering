@@ -1,4 +1,4 @@
-def safe_divide(a, b):
+def safe_divide(a: int, b: int) -> float | None:
     try:
         #Bunun incelikli bir yanı da var: try bloğunu olabildiğince küçük tutmak iyi pratiktir — sadece patlayabilecek satır (a / b) içeride olmalı ki neyi yakaladığın belli olsun.
         result = a / b
@@ -11,7 +11,7 @@ def safe_divide(a, b):
         print(f"Sayı tipine uygun girmelisin: {e}")
         return None
     
-def format_message(messages, separator=" | ", **kwargs):
+def format_message(messages: dict, separator: str = " | ", **kwargs: dict | None):
     
     message = [f"{m['role']}: {m['content']}" for m in messages]
     print(kwargs)
