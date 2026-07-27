@@ -5,5 +5,7 @@ description = "First steps to the Python for AI"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "fastapi[standard]>=0.140.0",
     "httpx>=0.28.1",
+    "uvicorn>=0.51.0",
 ]
