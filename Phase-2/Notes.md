@@ -45,3 +45,12 @@ En sık şu durumlarda görürsün: bir fonksiyonu çalıştırmadan önce/sonra
 
     - List Comprehesion: Python gibi programlama dillerinde mevcut bir listeden veya döngüden kısa, hızlı ve okunabilir yeni bir liste üretme yöntemidir
         ![List-comp](image-13.png)
+
+## 6-async/await
+![async-await](image-15.png)
+
+Async yapısının JS ten farkları:
+    -   asyncio.run -> JS'te <func_call> yazdığın an fonksiyon hemen çalışmaya başlar ve sana çalışan bir Promise döner. Python'da ise coroutine tembeldir: onu ya await etmen ya da bir event loop'a vermen gerekir, yoksa ölü durur.
+        ![alt text](image-16.png)
+    -   işleri Eşzamanlı yürütmek için: gather
+        ![gather](image-17.png)
