@@ -19,19 +19,19 @@ async with httpx.AsyncClient() as client:
     ![AsyncClient](image-1.png)
 
     Örnek kod: 
-    ![ornek-kod](/Phase-3/1-httpx.py)
-    ![note](image-2.png)
+![ornek-kod](/Phase-3/1-httpx.py)
+![note](image-2.png)
 
 ### with
-    ![with](image-4.png)
+![with](image-4.png)
 
 ## 2-pydantic
     -   pydantic gelen veriyi runtime'da doğrular ve dönüştürür (coerce eder).
-    ![pydantic](image-5.png)
+![pydantic](image-5.png)
     
     -JS -> pydantic ↔ Zod (TS'te z.object({...})) — birebir aynı iş: runtime schema validation
 ### BaseModel ve **data ile ignore mod ve strict mod
-    ![data](image-6.png)
+![data](image-6.png)
 
 ### "Coercion" (zorlama/dönüştürme) nedir?
     pydantic makul dönüşümleri otomatik yapar: 
