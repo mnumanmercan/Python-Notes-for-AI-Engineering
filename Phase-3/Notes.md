@@ -1,4 +1,4 @@
-## httpx
+## 1-httpx
 -   httpx, Python'ın modern HTTP istemcisidir — JS'teki fetch veya axios gibi. Yani bir sunucuya HTTP isteği (GET, POST vb.) atıp cevabı almak için kullanılır.
 -   httpx'in requests (pythonda http istekleri için kullanılan benzer yapı)'ten ayrıldığı asıl nokta: httpx hem senkron hem de async çalışabilir.
     - LLM sdk ler perde arkasında bunu kullanır.
@@ -24,3 +24,20 @@ async with httpx.AsyncClient() as client:
 
 ### with
     ![with](image-4.png)
+
+## 2-pydantic
+    -   pydantic gelen veriyi runtime'da doğrular ve dönüştürür (coerce eder).
+    ![pydantic](image-5.png)
+    
+    -JS -> pydantic ↔ Zod (TS'te z.object({...})) — birebir aynı iş: runtime schema validation
+### BaseModel ve **data ile ignore mod ve strict mod
+    ![data](image-6.png)
+
+### "Coercion" (zorlama/dönüştürme) nedir?
+    pydantic makul dönüşümleri otomatik yapar: 
+        "30" → 30, "true" → True. 
+    Ama saçma olanı reddeder: 
+        "yirmi" → int'e çevrilemez → hata. 
+    Bu "esnek ama güvenli" davranış API sınırlarında altın değerinde. (Katı mod da var, ileride görürüz.)
+
+![Pydantic_Summary](image-7.png)
