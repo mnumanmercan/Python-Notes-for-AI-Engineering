@@ -41,3 +41,30 @@ async with httpx.AsyncClient() as client:
     Bu "esnek ama güvenli" davranış API sınırlarında altın değerinde. (Katı mod da var, ileride görürüz.)
 
 ![Pydantic_Summary](image-7.png)
+
+## 3- FastAPI
+    Python'ın modern, async-first web framework'ü
+
+- JS ile farkı: ![JS-FastApi](image-8.png)
+
+- Temel Örnek: ![Fastapi](image-9.png)
+
+- Çalıştırma için web server sürekli ayakta kalıp istek dinlemeli — o yüzden bir ASGI server (uvicorn) ile çalıştırılır:
+    ```bash
+        uv add fastapi uvicorn
+        uv run uvicorn main:app --reload
+    ```
+![ASGI](image-10.png)
+
+- @app.get'i kodda çağırmadan nasıl tetiklersin:
+    ![Fast api get](image-11.png)
+
+### Özet
+- ![Routes](image-12.png)
+
+## 4-NumPY
+![Numpy Nedir](image-13.png)
+---
+![Vektorel Islemler](image-14.png)
+---
+![Cosine Similarity](image-15.png)
