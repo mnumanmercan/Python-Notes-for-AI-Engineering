@@ -68,3 +68,5 @@ async with httpx.AsyncClient() as client:
 ![Vektorel Islemler](image-14.png)
 ---
 ![Cosine Similarity](image-15.png)
+![argmax](image-16.png)
+![argmax-argsort](image-17.png)
