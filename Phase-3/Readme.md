@@ -72,3 +72,4 @@ async with httpx.AsyncClient() as client:
 ![argmax-argsort](image-17.png)
 
 ## 4b-Pandas
+    Pandas, Python'da tablo biçimindeki veriyi (satırlar ve sütunlar — yani Excel/CSV/veritabanı tablosu gibi) işlemek için kullanılan kütüphanedir. NumPy sayı dizilerinde uzmanken, Pandas "etiketli tablolar" üzerinde çok etkilidir.
