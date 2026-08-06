@@ -62,7 +62,7 @@ async with httpx.AsyncClient() as client:
 ### Özet
 - ![Routes](image-12.png)
 
-## 4-NumPY
+## 4a-NumPY
 ![Numpy Nedir](image-13.png)
 ---
 ![Vektorel Islemler](image-14.png)
@@ -70,3 +70,5 @@ async with httpx.AsyncClient() as client:
 ![Cosine Similarity](image-15.png)
 ![argmax](image-16.png)
 ![argmax-argsort](image-17.png)
+
+## 4b-Pandas
