@@ -73,3 +73,6 @@ async with httpx.AsyncClient() as client:
 
 ## 4b-Pandas
     Pandas, Python'da tablo biçimindeki veriyi (satırlar ve sütunlar — yani Excel/CSV/veritabanı tablosu gibi) işlemek için kullanılan kütüphanedir. NumPy sayı dizilerinde uzmanken, Pandas "etiketli tablolar" üzerinde çok etkilidir.
+
+### En kritik işlem: Filtreleme (boolean indexing)
+AI'da sürekli "şu koşulu sağlayan satırları getir" yaparsın (örn. "skoru 0.8'den yüksek chunk'lar"). pandas'ta bu boolean mask ile olur:![boolean-indexing](image-18.png)
