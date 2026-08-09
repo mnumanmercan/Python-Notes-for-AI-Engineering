@@ -113,3 +113,13 @@ Output:
 -   Bir bilgisayar için "kral" ve "kraliçe" kelimeleri sadece harf dizileridir — aralarında "sea" ile "kral" kadar yakınlık görür, çünkü ikisi de düz metin. Bilgisayar anlamı, benzerliği doğrudan kavrayamaz. Ama bilgisayar bir şeyi çok iyi yapar: sayıları (matrisler, vektorler ...) karşılaştırmak.
 - Embeddings'in fikri şu: her şeyi öyle bir sayı listesine çevirelim ki, anlamca benzer şeyler birbirine yakın sayılara düşsün. Böylece "bu iki şey ne kadar benzer?" sorusu, "bu iki sayı listesi birbirine ne kadar yakın?" sorusuna dönüşür — ki bunu bilgisayar anında hesaplar.
 ![Sezgi:](image-8.png)
+
+## 5 - RAG (Retrieval Augmented Generation)
+LLM modeli eğitildiği veri ve tarih kadar bilgiye sahiptir, eğitimi dışında olan veriler ya da eğitim tarihinden sonra ortaya çıkan verilerden bihaberdir. Bu LLM içinde user'lara tutarsız ve güncel olmayan ya da halisünatif veriler üretmesine sebep olur. Bunun için güncel veri çekebilen ya da senin özelleştirdiğin verilerden beslenebilen (şirket dökümanı, ürün veri tabanı, kişisel notlar vs) bir dış dünya bağlantısı ile iletişimde olması gerekir. İşte bu noktada dışardan ihtiyaç halinde verileri çekme işini RAG çözer.
+RAG'ın iki aşaması:
+-   İndeksleme (offline, bir kere): Belgeleri parçalara böl (chunk) → her chunk'ı embed et → sakla.
+-   Sorgu (online, her soruda): Soruyu embed et → en benzer chunk'ları bul (retrieve) → prompt'a koy (augment) → LLM cevap versin (generate).
+
+### Grounding
+-   Grounding talimatı, prompt içinde llm i kısıtlayacak ve halisünasyonlara karşı önlem olan bir yapıdır.
+- XML taglar context'leri ayırır ve llm'i prompt injection'lara karşı daha güçlü kılar. Çünkü model bu taglar sayesinde eğer döküman içinde injection varsa bunun bir talimat değil retrive verisi olduğunu bilir ve aksiyon almaz.
