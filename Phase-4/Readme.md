@@ -69,3 +69,47 @@ Async örneği ![Async_call](/Phase-4/llm_multiple_call.py)
 ## 3 - Tool Use/Function calling
     LLM tek başına şunları yapamaz: güncel veriye erişmek (hava, stok, DB'deki sipariş), güvenilir matematik, dış dünyada bir eylem (e-posta gönder, kayıt oluştur). Tool use = modele "şu fonksiyonları çağırabilirsin" demek. Model hangi fonksiyonu ne zaman, hangi argümanlarla çağıracağına kendi karar verir.
 ![Tool-use-loop](image-7.png)
+
+## 4 - Embeddings
+Embeddings, bir veri kümesinin (kelime, cümle, görüntü, ürün, video...)  sayı listesi ile temsiline — yani bir vektöre — çeviren temsil biçimidir. "sayı listesi" dediğimiz şey aslında az önce konuştuğumuz NumPy dizisinin ta kendisidir. Yani embeddings, NumPy vektörlerinin çok güçlü bir kullanım alanı.
+```python
+    import voyageai
+    import os
+    from dotenv import load_dotenv
+    import numpy as np
+
+    load_dotenv()
+    api_key = os.environ["VOYAGE_API_KEY"]
+
+    vo = voyageai.Client()
+
+    documents = [
+        "Python programlama dili veri bilimi için çok popülerdir.",
+        "Kediler günde ortalama 15 saat uyur.",
+        "FastAPI, async destekli modern bir Python web framework'üdür.",
+        "Kahve çekirdekleri kavrulduktan sonra öğütülür.",
+    ]
+
+    doc_vecs = vo.embed(documents, model="voyage-4", input_type="document").embeddings
+
+    print("------------")
+
+    query = "async web geliştirme aracı"
+    query_vec = vo.embed([query], model="voyage-4", input_type="query").embeddings[0]
+
+
+    similarities = np.dot(doc_vecs, query_vec)
+    best = np.argsort(similarities)[::-1][:2] ## sıralı benzerlik listesinde en yakın 2 içerik seçildi.
+    for i in best:
+        print(f"{similarities[i]:.3f} → {documents[i]}")
+```
+Output: 
+```
+    0.510 → FastAPI, async destekli modern bir Python web framework'üdür.
+    0.151 → Python programlama dili veri bilimi için çok popülerdir.
+```
+
+### Bilgisayar anlamsal karşılaştırma yapamazlar!
+-   Bir bilgisayar için "kral" ve "kraliçe" kelimeleri sadece harf dizileridir — aralarında "sea" ile "kral" kadar yakınlık görür, çünkü ikisi de düz metin. Bilgisayar anlamı, benzerliği doğrudan kavrayamaz. Ama bilgisayar bir şeyi çok iyi yapar: sayıları (matrisler, vektorler ...) karşılaştırmak.
+- Embeddings'in fikri şu: her şeyi öyle bir sayı listesine çevirelim ki, anlamca benzer şeyler birbirine yakın sayılara düşsün. Böylece "bu iki şey ne kadar benzer?" sorusu, "bu iki sayı listesi birbirine ne kadar yakın?" sorusuna dönüşür — ki bunu bilgisayar anında hesaplar.
+![Sezgi:](image-8.png)
