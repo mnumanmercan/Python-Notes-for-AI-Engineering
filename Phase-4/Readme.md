@@ -123,3 +123,88 @@ RAG'ın iki aşaması:
 ### Grounding
 -   Grounding talimatı, prompt içinde llm i kısıtlayacak ve halisünasyonlara karşı önlem olan bir yapıdır.
 - XML taglar context'leri ayırır ve llm'i prompt injection'lara karşı daha güçlü kılar. Çünkü model bu taglar sayesinde eğer döküman içinde injection varsa bunun bir talimat değil retrive verisi olduğunu bilir ve aksiyon almaz.
+
+## 6 - Agent (LLM + Tools + loop)
+
+
+```python
+    # --- Gerçek fonksiyonlar (mock) ---
+    def urun_fiyati(urun: str) -> int:
+        return {"Airpods": 5000, "iPhone": 60000}.get(urun, 0)
+
+    def kdv_hesapla(fiyat: int) -> int:
+        return int(fiyat * 1.20)   # %20 KDV
+
+
+    # --- Dispatcher: tool adı → gerçek fonksiyon ---
+    TOOL_FONKSIYONLARI = {
+        "urun_fiyati": urun_fiyati,
+        "kdv_hesapla": kdv_hesapla,
+    }
+
+    # --- Tool tanımları ---
+    tools = [
+        {
+            "name": "urun_fiyati",
+            "description": "Bir ürünün KDV hariç fiyatını TL olarak getirir.",
+            "input_schema": {
+                "type": "object",
+                "properties": {"urun": {"type": "string"}},
+                "required": ["urun"],
+            },
+        },
+        {
+            "name": "kdv_hesapla",
+            "description": "Verilen fiyata %20 KDV ekleyip toplam fiyatı döndürür.",
+            "input_schema": {
+                "type": "object",
+                "properties": {"fiyat": {"type": "integer"}},
+                "required": ["fiyat"],
+            },
+        },
+    ]
+
+    # --- AGENT DÖNGÜSÜ ---
+    def agent(soru: str) -> str:
+        messages = [{"role": "user", "content": soru}]
+
+        while True:                                    # ← döngü = otonomi
+            response = client.messages.create(
+                model="claude-sonnet-4-5", max_tokens=1024,
+                tools=tools, messages=messages,
+            )
+
+            if response.stop_reason != "tool_use":     # ← çıkış: model tatmin oldu
+                return response.content[0].text
+
+            # Modelin tool isteğini hafızaya ekle
+            messages.append({"role": "assistant", "content": response.content})
+
+            # Tüm tool_use bloklarını çalıştır (aynı turda birden fazla olabilir)
+            tool_results = []
+            for block in response.content:
+                if block.type == "tool_use":
+                    print(f"  🔧 {block.name}: {block.input}")   # adımları görmek için
+                    sonuc = TOOL_FONKSIYONLARI[block.name](**block.input)  # dispatcher
+                    tool_results.append({
+                        "type": "tool_result",
+                        "tool_use_id": block.id,
+                        "content": str(sonuc),          # tool_result içeriği string olmalı
+                    })
+
+            messages.append({"role": "user", "content": tool_results})
+
+    print(agent("Airpods'un KDV dahil fiyatı ne kadar?")) ## 2 tool (fiyat + kdv toolu) çağırır
+    print(agent("iPhone kaç para, KDV hariç?")) ## 1 tool (fiyat) çağırır
+```
+
+Output: 
+```
+    🔧 urun_fiyati: {'urun': 'Airpods'}
+    🔧 kdv_hesapla: {'fiyat': 5000}
+    Airpods'un KDV dahil fiyatı **6.000 TL**'dir. 
+    Cevap: (KDV hariç fiyat: 5.000 TL + %20 KDV = 6.000 TL)
+
+    🔧 urun_fiyati: {'urun': 'iPhone'}
+    Cevap: iPhone'un KDV hariç fiyatı **60.000 TL**'dir.
+```
