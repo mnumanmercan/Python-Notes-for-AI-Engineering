@@ -31,3 +31,10 @@ except Exception:
     logger.exception("LLM başarısız")
     raise
 ```
+
+## 3 - Resiliance (Dayanıklılık)
+    Tamam try/cath, logging ile hataları yakalayıp, bazı kayıtları görebiliyorsun. Peki hataları yakaladıktan sonra ne olacak? Programın sonlanması ya da hata kaydının verilip durması iyi bir user experience olmayacaktır. Sonrasını handle edebilecek bir akışa sahip olmalı projenki dayanıklı -resiliance- proje olsun.
+
+![neden-kırılgan](image-3.png)
+
+![answers](image-4.png)

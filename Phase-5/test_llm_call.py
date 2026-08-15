@@ -1,5 +1,5 @@
 
-from anthropic import Anthropic
+from anthropic import Anthropic, APIStatusError, APITimeoutError, RateLimitError
 from config import settings
 from pricing import hesapla_maliyet
 import logging
@@ -12,7 +12,12 @@ logging.basicConfig(
 logger = logging.getLogger(__name__) 
 
 
-client = Anthropic(api_key=settings.anthropic_api_key)
+client = Anthropic(
+    api_key=settings.anthropic_api_key,
+    timeout=settings.request_timeout,
+    max_retries=2,
+)
+
 example_paragraph = """
     When was the last time you were able to give 100% of your attention to a single task?
 
@@ -54,6 +59,12 @@ try:
     )
 
     logger.info("Maliyet | $%.6f", maliyet)
+except RateLimitError:
+    logger.error("Rate limit - SDK retry limit filled")
+except APITimeoutError:
+    logger.error("Timeout - API is very slow...")
+except APIStatusError as e:
+    logger.error("API error | status=%s", e.status_code)
 except Exception as e:
     logger.exception("LLM çağrısı başarısız")
     raise
