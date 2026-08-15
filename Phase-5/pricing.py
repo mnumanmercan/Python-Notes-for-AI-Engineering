@@ -5,12 +5,15 @@ MODEL_PRICES = {
     "claude-sonnet-4-5": {"input": 5.00, "output": 25.00},
 }
 
-# pricing.py (devamı)
-def hesapla_maliyet(model: str, input_tokens: int, output_tokens: int) -> float:
-    fiyat = MODEL_PRICES.get(model)          # .get → yoksa None (KeyError değil)
+def hesapla_maliyet(model, input_tokens, output_tokens,
+                    cache_write_tokens=0, cache_read_tokens=0) -> float:
+    fiyat = MODEL_PRICES.get(model)
     if fiyat is None:
-        raise ValueError(f"Bilinmeyen model, fiyat tanımlı değil: {model}")
-
-    input_maliyet = input_tokens / 1_000_000 * fiyat["input"]
-    output_maliyet = output_tokens / 1_000_000 * fiyat["output"]
-    return input_maliyet + output_maliyet
+        raise ValueError(f"Bilinmeyen model: {model}")
+    p_in = fiyat["input"]       # base input $/1M
+    return (
+        input_tokens        / 1_000_000 * p_in
+        + cache_write_tokens / 1_000_000 * p_in * 1.25
+        + cache_read_tokens  / 1_000_000 * p_in * 0.10
+        + output_tokens      / 1_000_000 * fiyat["output"]
+    )

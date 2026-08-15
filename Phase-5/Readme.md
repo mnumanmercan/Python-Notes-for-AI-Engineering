@@ -54,3 +54,13 @@ except Exception:
 - **Hatırlatma:** streaming'i de `try/except` ile sar (timeout/rate-limit yine olur).
 ### FAQ
 ![streaming-sse](image-6.png)
+
+## 5- Costs & Performance
+    her çağrının maliyetini logladın — tek çeviri $0.0005. Küçük görünüyor. Ama ölçekte düşün: RAG uygulaman günde 50.000 soru alıyor, her soruda 20 chunk context gönderiyorsun. Aynı sistem prompt'u ve aynı belgeler her seferinde baştan işleniyor. Aylık fatura birden binlerce dolar. Bu konu, aynı işi daha ucuz ve daha hızlı yapmanın kaldıraçlarıyla ilgili.
+- 4 Konsept ile handling:
+![four](image-7.png)
+
+![input_format](image-8.png)
+
+- Ne zaman cachle
+![alt text](image-9.png)
