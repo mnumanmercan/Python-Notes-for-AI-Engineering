@@ -38,3 +38,19 @@ except Exception:
 ![neden-kırılgan](image-3.png)
 
 ![answers](image-4.png)
+
+## 4 - Streaming
+    ChatGPT'de Kullanıcı LLM e bir girdi verip cevabını çok kısa sürede kelimelerin ekrana akması şeklinde görebiliyor. Bu da kullanıcının uzun süre boş ekrana bakmaya karşı yaşadığı kötü deneyimi handle eden streaming kavramını açıklıyor.
+    10-15 saniye bomboş loading yerine hemen akmaya başlayan böylece sıkılmasını engelleyen bir yapı sağlıyor.
+
+**Öz:** Yanıtı bütün beklemek yerine token token akıtırsın → ilk kelime ~1s'de görünür, algılanan hız artar. Bu, Faz 2'deki generator'ın (`yield`, lazy) LLM yüzüdür; altyapıda **SSE (Server-Sent Events)** ile event akışı gelir.
+
+### Can alıcı noktalar
+- **Desen:** `with client.messages.stream(...) as stream:` (context manager, ağ kaynağını düzgün kapatır) → `for t in stream.text_stream: print(t, end="", flush=True)`.
+- **`end=""`**: `print`'in eklediği `\n`'i engeller, parçalar yan yana akar. **`flush=True`**: çıktı tampona takılmasın, hemen ekrana bassın (dosyaya/pipe'a yönlendirince fark dramatik).
+- **Bütünü akış BİTİNCE al:** `input_tokens` baştan bellidir ama `output_tokens` + tam metin ancak akış bitince belli olur. `stream.get_final_message()` → `.usage`, `.content[0].text` (SDK arka planda biriktirir). Token/maliyet log'unu **döngüden SONRA** koy.
+- **Tek kullanımlık:** `text_stream` bir generator → tükettikten sonra tekrar dönemezsin; ama `get_final_message()` bütünü saklar.
+- **Granülarite API'nin:** parça = token (yarım/çok kelime olabilir). "Harf harf" akış = client tarafı **kozmetik daktilo** (`time.sleep`); ağı hızlandırmaz, sadece görüntü. Üretimde efekti frontend'de yap.
+- **Hatırlatma:** streaming'i de `try/except` ile sar (timeout/rate-limit yine olur).
+### FAQ
+![streaming-sse](image-6.png)

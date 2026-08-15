@@ -3,6 +3,7 @@ from anthropic import Anthropic, APIStatusError, APITimeoutError, RateLimitError
 from config import settings
 from pricing import hesapla_maliyet
 import logging
+import time
 
 logging.basicConfig(
     level=logging.INFO,                                    # eşik: INFO ve üstü
@@ -18,7 +19,11 @@ client = Anthropic(
     max_retries=2,
 )
 
-example_paragraph = """
+example_paragraph = """Hello, world! When was the last time you were able to give 100% of your attention to a single task?
+
+When you can give something your complete attention — which isn't always easy in a distraction-filled world — you'll do better quality work. You also get more done when you don't have to keep stopping for less important tasks!
+"""
+example_paragraph1 = """
     When was the last time you were able to give 100% of your attention to a single task?
 
 When you can give something your complete attention — which isn't always easy in a distraction-filled world — you'll do better quality work. You also get more done when you don't have to keep stopping for less important tasks!
@@ -41,17 +46,21 @@ With a bit of careful planning, it's not hard to make deep work a part of your r
 """
 try:
     logger.info("LLM çağrısı başlıyor | model=%s", settings.model)
-    response = client.messages.create(
+    with client.messages.stream(
         model=settings.model,
         max_tokens=settings.max_tokens,
         system="Sen alanında uzman bir çevirmensin; sana verilen İngilizce cümleyi sadece Türkçeye çevir, daha sonra bu çeviri altına metnin özetini ekle. Başka bir şey yazma.",
         messages=[
             {"role": "user", "content": example_paragraph}
         ]
-    )
+    ) as stream:
+        for text in stream.text_stream:
+            for ch in text:
+                print(ch, end="", flush=True)
+                time.sleep(0.03)
+        response = stream.get_final_message()
     logger.info("Token usage | input=%s output=%s",
             response.usage.input_tokens, response.usage.output_tokens)
-
     maliyet = hesapla_maliyet(
         settings.model,
         response.usage.input_tokens,
@@ -69,6 +78,6 @@ except Exception as e:
     logger.exception("LLM çağrısı başarısız")
     raise
 else:
-    print(response.content[0].text)
+    logger.info("Output: %s", response)
 
 
